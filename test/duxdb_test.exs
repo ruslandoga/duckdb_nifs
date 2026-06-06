@@ -13,8 +13,10 @@ defmodule DuxDBTest do
     end
 
     test "fails on invalid path" do
+      expanded_path = Path.expand("tmp/somewhere/test.db")
+
       assert_raise ArgumentError,
-                   "IO Error: Cannot open file \"tmp/somewhere/test.db\": No such file or directory",
+                   "IO Error: Cannot open file \"#{expanded_path}\": No such file or directory",
                    fn -> DuxDB.open("tmp/somewhere/test.db", []) end
     end
   end

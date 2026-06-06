@@ -22,7 +22,7 @@ defmodule DuxDB do
   Returns the version of the linked DuckDB library.
 
       iex> DuxDB.library_version()
-      "v1.4.2"
+      "v1.5.3"
 
   See https://duckdb.org/docs/api/c/api#duckdb_library_version
   """
@@ -33,7 +33,7 @@ defmodule DuxDB do
   Returns the total amount of configuration options available.
 
       iex> DuxDB.config_count()
-      199
+      285
 
   See https://duckdb.org/docs/api/c/api#duckdb_config_count
   """
@@ -44,28 +44,10 @@ defmodule DuxDB do
   Obtains a human-readable name and description of a specific configuration option.
 
       iex> DuxDB.get_config_flag(0)
-      {"access_mode", "Access mode of the database (AUTOMATIC, READ_ONLY or READ_WRITE)"}
-
-      iex> all_config_flags = Enum.map(0..DuxDB.config_count() - 1, fn idx ->
-      ...>   DuxDB.get_config_flag(idx)
-      ...> end)
-      iex> all_config_flags |> Enum.drop(23) |> Enum.take(6)
-      [
-        {"custom_user_agent", "Metadata from DuckDB callers"},
-        {"debug_asof_iejoin",
-         "DEBUG SETTING: force use of IEJoin to implement AsOf joins"},
-        {"debug_checkpoint_abort",
-         "DEBUG SETTING: trigger an abort while checkpointing for testing purposes"},
-        {"debug_force_external",
-         "DEBUG SETTING: force out-of-core computation for operators that support it, used for testing"},
-        {"debug_force_no_cross_product",
-         "DEBUG SETTING: Force disable cross product generation when hyper graph isn't connected, used for testing"},
-        {"debug_skip_checkpoint_on_commit",
-         "DEBUG SETTING: skip checkpointing on commit"}
-      ]
+      {"__delta_only_variant_encoding_enabled", "Enables the Parquet reader to identify a Variant structurally."}
 
       iex> DuxDB.get_config_flag(DuxDB.config_count() + 1)
-      ** (ArgumentError) argument error: 200
+      ** (ArgumentError) argument error: 286
 
   See https://duckdb.org/docs/api/c/api#duckdb_get_config_flag
   """
@@ -220,7 +202,7 @@ defmodule DuxDB do
 
         iex> conn = DuxDB.connect(DuxDB.open())
         iex> try do DuxDB.query(conn, "sel 1") rescue e -> e end
-        %DuxDB.Error{code: 14, message: "Parser Error: syntax error at or near \"sel\"\n\nLINE 1: sel 1\n        ^\n\nLINE 1: sel 1\n        ^"}
+        %DuxDB.Error{code: 14, message: "Parser Error: syntax error at or near \"sel\"\n\nLINE 1: sel 1\n        ^"}
 
     """
 
@@ -244,7 +226,7 @@ defmodule DuxDB do
 
       iex> conn = DuxDB.connect(DuxDB.open())
       iex> try do DuxDB.query(conn, "SEL 42") rescue e -> e end
-      %DuxDB.Error{code: 14, message: "Parser Error: syntax error at or near \"SEL\"\n\nLINE 1: SEL 42\n        ^\n\nLINE 1: SEL 42\n        ^"}
+      %DuxDB.Error{code: 14, message: "Parser Error: syntax error at or near \"SEL\"\n\nLINE 1: SEL 42\n        ^"}
 
   The result is destroyed with `destroy_result/1` or on garbage collection.
 
@@ -459,7 +441,7 @@ defmodule DuxDB do
 
       iex> conn = DuxDB.connect(DuxDB.open())
       iex> try do DuxDB.prepare(conn, "SEL ?") rescue e -> e end
-      %ArgumentError{message: "Parser Error: syntax error at or near \"SEL\"\n\nLINE 1: SEL ?\n        ^\n\nLINE 1: SEL ?\n        ^"}
+      %ArgumentError{message: "Parser Error: syntax error at or near \"SEL\"\n\nLINE 1: SEL ?\n        ^"}
 
   The statement is destroyed with `destroy_prepare/1` or on garbage collection.
 
