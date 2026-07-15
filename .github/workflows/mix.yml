@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: "test (duckdb=${{ matrix.duckdb }}, elixir=${{ matrix.elixir }}, otp=${{ matrix.otp }}${{ matrix.dialyzer && ' +dialyzer' || '' }}${{ matrix.lint && ' +lint' || '' }})"
+    name: "test @ elixir:${{ matrix.elixir }} otp:${{ matrix.otp }} duckdb:${{ matrix.duckdb }} ${{ matrix.dialyzer && ' +dialyzer' || '' }}${{ matrix.lint && ' +lint' || '' }}"
 
     env:
       MIX_ENV: test
@@ -19,10 +19,13 @@ jobs:
       matrix:
         duckdb: [1.5.4]
         include:
+          # some old elixir version with the minimum supported OTP
+          # see https://hexdocs.pm/elixir/compatibility-and-deprecations.html#between-elixir-and-erlang-otp
           - elixir: 1.17
             otp: 26
-          - elixir: "1.20"
-            otp: 29
+          # the latest versions with all static checks
+          - elixir: ">0"
+            otp: ">0"
             dialyzer: true
             lint: true
 
@@ -41,10 +44,10 @@ jobs:
           path: |
             deps
             _build
-          key: test-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ github.head_ref || github.ref }}-${{ hashFiles('**/mix.lock') }}
+          key: test-${{ steps.beam.outputs.elixir-version }}-${{ github.head_ref || github.ref }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            test-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ github.head_ref || github.ref }}-
-            test-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-refs/heads/master-
+            test-${{ steps.beam.outputs.elixir-version }}-${{ github.head_ref || github.ref }}-
+            test-${{ steps.beam.outputs.elixir-version }}-refs/heads/master-
 
       - run: |
           curl -L https://github.com/duckdb/duckdb/releases/download/v${{ matrix.duckdb }}/libduckdb-linux-amd64.zip -o libduckdb.zip
@@ -74,9 +77,12 @@ jobs:
         uses: actions/cache@v6
         with:
           path: plts
-          key: plts-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ github.head_ref || github.ref }}
+          key: plts-${{ steps.beam.outputs.elixir-version }}-${{ github.head_ref || github.ref }}
           restore-keys: |
-            plts-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-refs/heads/master
+            plts-${{ steps.beam.outputs.elixir-version }}-refs/heads/master
 
       - run: mix dialyzer --format github
         if: ${{ matrix.dialyzer }}
+
+      - uses: crate-ci/typos@master
+        if: ${{ matrix.lint }}
