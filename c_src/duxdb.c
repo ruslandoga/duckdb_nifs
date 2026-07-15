@@ -1348,7 +1348,7 @@ static ErlNifFunc nif_funcs[] = {
     {"result_return_type", 1, duxdb_result_return_type, 0},
 
     {"fetch_chunk", 1, duxdb_fetch_chunk, 0},
-    // TODO destoy once empty
+    // TODO destroy once empty
     {"destroy_data_chunk", 1, duxdb_destroy_data_chunk, 0},
     {"data_chunk_get_column_count", 1, duxdb_data_chunk_get_column_count, 0},
     {"data_chunk_get_vector_nif", 2, duxdb_data_chunk_get_vector, 0},

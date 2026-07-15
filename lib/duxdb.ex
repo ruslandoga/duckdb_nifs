@@ -196,7 +196,7 @@ defmodule DuxDB do
     Wraps DuckDB error.
 
     Contains `code` that is `duckdb_error_type` (e.g. DUCKDB_ERROR_PARSER = 14)
-    and the correspoinding error `message`.
+    and the corresponding error `message`.
 
     Example:
 
