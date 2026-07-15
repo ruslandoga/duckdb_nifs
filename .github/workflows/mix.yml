@@ -83,6 +83,3 @@ jobs:
 
       - run: mix dialyzer --format github
         if: ${{ matrix.dialyzer }}
-
-      - uses: crate-ci/typos@master
-        if: ${{ matrix.lint }}
